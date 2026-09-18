@@ -1,0 +1,155 @@
+================================================================================
+ PHASE 6: CELL-SEASONAL MULTIMODAL ANOMALY DETECTION REPORT
+ Multimodal Geospatial Anomaly Intelligence System (Delhi-NCR)
+================================================================================
+
+1. OBJECTIVE & CORE PHILOSOPHY
+--------------------------------------------------------------------------------
+Core Guiding Principle: 'What is normal for THIS cell during THIS time of year?'
+The system detects localized deviations relative to each cell's frozen 36-month climatological baseline,
+avoiding false alarms caused by cross-sectional spatial variance or seasonal weather shifts.
+
+2. INPUT DATASETS & VERIFIED SCHEMAS
+--------------------------------------------------------------------------------
+Canonical Data Sources:
+  - Frozen Climatology Table: data/processed/historical_cell_climatology_36m.csv (38,640 records)
+  - Historical Baseline Data: data/processed/historical_36m_multimodal_features.parquet (16,560 rows)
+  - Operational Test Data:    data/processed/operational_2026_multimodal_features.parquet (2,760 rows)
+  - Canonical Spatial Grid:   data/processed/study_grid.geojson (460 cells, 23 rows x 20 cols, EPSG:32643)
+
+3. TEMPORAL DUAL-HORIZON SEPARATION & LEAKAGE PROTECTION
+--------------------------------------------------------------------------------
+  - Historical Training Window:  2022-04-01 to 2025-04-01 (36 consecutive months, 3 annual cycles)
+  - Intermediate Buffer Period:  2025-04-01 to 2025-12-31 (9-month structural buffer)
+  - Operational Evaluation Tier: 2026-01-01 to 2026-07-01 (6 consecutive operational months: Jan-Jun 2026)
+Strict Invariant: Zero operational data was used to fit the historical baseline or tune detector parameters.
+
+4. BASELINE METHODOLOGY
+--------------------------------------------------------------------------------
+For each cell_id x calendar_month x feature:
+  - Baseline center: median(x_hist)
+  - Baseline scale:  MAD = median(|x_hist - median|)
+  - Sample size:     n_observations (actual valid historical samples, 0 <= n <= 3, never imputed)
+
+5. ROBUST-Z METHODOLOGY & SIGNED DIRECTION
+--------------------------------------------------------------------------------
+Residual: residual = observed - median
+For MAD > 0: robust_scale = 1.4826 * MAD; robust_z = residual / robust_scale; abs_robust_z = |robust_z|
+Signed direction is strictly preserved: positive = greener/brighter/wetter than baseline; negative = browner/dimmer/drier.
+
+6. ZERO-MAD EXPLICIT HANDLING (NO ARTIFICIAL EPSILON)
+--------------------------------------------------------------------------------
+Total Zero-MAD Profile Evaluations: 24 cell-month-features
+Zero-MAD Deviations (observed != median): 24
+Policy: When MAD == 0, robust_z is set to NaN without manufacturing pseudo z-scores via epsilon.
+Zero-MAD deviations are tracked explicitly as binary breaks from constant baseline history.
+
+7. BASELINE SAMPLE-SIZE LIMITATIONS
+--------------------------------------------------------------------------------
+Three annual observations per calendar month provide an initial seasonal reference but remain a limited sample.
+Baseline usability evaluated under rules: n >= 1 (100% usable), n >= 2 (99.1% usable), n >= 3 (95.3% usable).
+
+8. QUALITY & MISSING DATA ROBUSTNESS
+--------------------------------------------------------------------------------
+Operational 2026 data had 100.0% valid optical, nightlight, and weather observations (0 NaNs).
+Missing historical observations (e.g. monsoon clouds) were retained as NaN and reduced baseline_n accordingly.
+
+9. THRESHOLD SENSITIVITY GRID RESULTS
+--------------------------------------------------------------------------------
+Tau   Min_N   Feature Anomalies   Candidate Cells   Total Events   Multi-Cell Events
+2.0     1.0          7534.0              1552.0            131.0              70.0
+2.5     1.0          6123.0              1271.0            182.0              94.0
+3.0     1.0          5613.0              1077.0            242.0              111.0
+3.5     1.0          5209.0              931.0            250.0              106.0
+2.0     2.0          7534.0              1552.0            131.0              70.0
+2.5     2.0          6123.0              1271.0            182.0              94.0
+3.0     2.0          5613.0              1077.0            242.0              111.0
+3.5     2.0          5209.0              931.0            250.0              106.0
+2.0     3.0          7534.0              1552.0            131.0              70.0
+2.5     3.0          6123.0              1271.0            182.0              94.0
+3.0     3.0          5613.0              1077.0            242.0              111.0
+3.5     3.0          5209.0              931.0            250.0              106.0
+
+10. CONTROLLED SYNTHETIC PERTURBATION BENCHMARK METHODOLOGY
+--------------------------------------------------------------------------------
+Because real-world ground-truth anomaly labels do not exist, real-world accuracy is NOT claimed.
+Validation evaluates controlled sensitivity on historical data copies across +/-1, +/-2, +/-3 robust scales.
+
+11. MULTIMODAL EVIDENCE METHODOLOGY (NO ARBITRARY 2x WEIGHTING)
+--------------------------------------------------------------------------------
+Unweighted formulation:
+  activity_evidence_count = optical_evidence_count + int(viirs_anomalous)
+  activity_features_available = optical_features_available + int(viirs_available)
+  activity_evidence_score = activity_evidence_count / activity_features_available
+
+12. WEATHER CONTEXT TREATMENT
+--------------------------------------------------------------------------------
+Weather is strictly CONTEXT / CONFOUNDING EVIDENCE; it never drives the activity evidence score.
+Weather deviations are tracked separately as environmental_context_ratio.
+
+13. SPATIAL COHERENCE METHODOLOGY (4-NEIGHBOR ROOK ADJACENCY)
+--------------------------------------------------------------------------------
+4-neighbor ROOK connectivity (up, down, left, right; no diagonal adjacency) on 23x20 500m grid.
+Connected components group contiguous candidate cells into coherent multi-cell events.
+
+14. EVENT FORMATION METHODOLOGY & DOMINANT FEATURE
+--------------------------------------------------------------------------------
+Events record centroid, bounding box, cell list, coherence flag, and dominant activity feature.
+Dominant feature is derived strictly from optical and nightlight modalities (never weather).
+
+15. 2026 OPERATIONAL ANOMALY DETECTION RESULTS
+--------------------------------------------------------------------------------
+Total Operational Cell-Months Scored: 2,760 (460 cells x 6 months)
+Candidate Anomalous Cells (tau=3.0):   1077 (39.02% of cell-months)
+Total Spatial Events Formed:          242 (111 multi-cell coherent, 131 single-cell isolated)
+
+16. MONTHLY OPERATIONAL BREAKDOWN (2026)
+--------------------------------------------------------------------------------
+Month     Candidate Cells (%)   Total Events   Multi-Cell Coherent   Mean Evidence
+2026-01       145 (31.52%)          37                17             0.2810
+2026-02       290 (63.04%)          12                 6             0.4571
+2026-03       213 (46.30%)          44                24             0.3707
+2026-04       198 (43.04%)          50                26             0.3342
+2026-05        80 (17.39%)          46                15             0.1957
+2026-06       151 (32.83%)          53                23             0.2870
+
+17. FEATURE-LEVEL ANOMALY BREAKDOWN
+--------------------------------------------------------------------------------
+Feature                     Modality   Anomalies (%)   Zero-MAD Devs   Mean |z|
+ndvi_mean                   optical      871 (31.56%)         11           6.21
+ndbi_mean                   optical      749 (27.14%)          7           4.81
+ndwi_mean                   optical      975 (35.33%)          6           6.34
+viirs_avg_rad_mean          activity     948 (34.35%)          0           6.91
+era5_temperature_mean       weather        0 ( 0.00%)          0           0.55
+era5_precipitation_total    weather     1150 (41.67%)          0           9.54
+era5_wind_speed_mean        weather      920 (33.33%)          0           4.28
+
+18. SYNTHETIC DETECTION SENSITIVITY BENCHMARK RESULTS
+--------------------------------------------------------------------------------
+Injected Magnitude (Scales)   Tau=2.0 (%)   Tau=2.5 (%)   Tau=3.0 (%)   Tau=3.5 (%)
+  +/- 1.0 Scales                   19.8%         14.4%         12.6%         10.4%
+  +/- 2.0 Scales                   51.2%         35.4%         18.0%         13.2%
+  +/- 3.0 Scales                   91.0%         67.2%         50.2%         35.0%
+
+19. SCIENTIFIC LIMITATIONS
+--------------------------------------------------------------------------------
+1. Limited Historical Sample: 3 years of baseline data provides limited empirical spread per calendar month.
+2. Spatial Granularity: ERA5 is native ~11km; coarse resolution limits localized weather anomaly attribution.
+3. Sensor Incompatibilities: Optical reflects surface cover; VIIRS reflects artificial light; they capture different physical processes.
+
+20. REPRODUCIBILITY COMMAND
+--------------------------------------------------------------------------------
+Run: python src/analysis/phase6_anomaly_detection.py
+
+21. EXPLICIT STATEMENT ON REAL-WORLD ANOMALY GROUND TRUTH
+--------------------------------------------------------------------------------
+There is NO verified ground-truth anomaly label in the current dataset.
+Real-world precision, recall, accuracy, and F1 scores are explicitly NOT claimed.
+Detected spatial events represent statistical candidate anomalies requiring external corroboration.
+
+22. RECOMMENDATIONS FOR PHASE 7 (INVESTIGATION AGENT)
+--------------------------------------------------------------------------------
+1. Ingest generated candidate events table: data/processed/anomaly/anomaly_events.parquet.
+2. Use event bounding boxes, months, and dominant features to query localized external sources (OSM, news, reports).
+3. Formulate multi-hypothesis explanations without jumping to unsupported causal conclusions.
+================================================================================

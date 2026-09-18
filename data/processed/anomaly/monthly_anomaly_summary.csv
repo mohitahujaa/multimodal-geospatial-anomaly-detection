@@ -1,0 +1,7 @@
+month,total_cells,candidate_anomalous_cells,candidate_pct,total_spatial_events,multi_cell_events,single_cell_events,mean_activity_evidence
+2026-01,460,145,31.52,37,17,20,0.281
+2026-02,460,290,63.04,12,6,6,0.4571
+2026-03,460,213,46.3,44,24,20,0.3707
+2026-04,460,198,43.04,50,26,24,0.3342
+2026-05,460,80,17.39,46,15,31,0.1957
+2026-06,460,151,32.83,53,23,30,0.287

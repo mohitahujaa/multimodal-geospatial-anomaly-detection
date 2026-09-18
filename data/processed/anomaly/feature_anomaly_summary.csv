@@ -1,0 +1,8 @@
+feature,modality,total_observations,valid_observations,missing_observations,anomalies_detected,anomaly_rate_pct,zero_mad_deviations,mean_abs_robust_z
+ndvi_mean,optical,2760,2760,0,871,31.56,11,6.2121
+ndbi_mean,optical,2760,2760,0,749,27.14,7,4.8088
+ndwi_mean,optical,2760,2760,0,975,35.33,6,6.3354
+viirs_avg_rad_mean,activity,2760,2760,0,948,34.35,0,6.9125
+era5_temperature_mean,weather,2760,2760,0,0,0.0,0,0.5521
+era5_precipitation_total,weather,2760,2760,0,1150,41.67,0,9.5395
+era5_wind_speed_mean,weather,2760,2760,0,920,33.33,0,4.282
