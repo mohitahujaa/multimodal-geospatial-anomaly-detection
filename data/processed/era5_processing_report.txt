@@ -1,0 +1,59 @@
+=============================================================
+ ERA5-Land Weather Phase 3 Processing Report
+=============================================================
+Dataset Name:             ECMWF ERA5-Land Hourly (Copernicus Climate Data Store / GEE)
+Dataset ID:               ECMWF/ERA5_LAND/HOURLY
+Date Range:               [2024-03-01, 2024-04-01)
+Temporal Resolution:      Hourly (744 total hours in March 2024)
+Native Spatial Scale:     ~11132.0 meters (~0.1 degrees, ~9-11 km)
+Study Area Bounding Box:  [77.25, 28.5] to [77.35, 28.6] (WGS84)
+Spatial Analysis Grid:    study_grid.geojson (460 cells, ~500m x 500m)
+
+Spatial Association Method:
+-------------------------------------------------------------
+- Nearest-grid-point spatial assignment from 500m cell centroid
+  to native ERA5-Land grid point.
+- Number of unique ERA5 source grid points: 2
+- Unique source coordinates: [(28.5501, 77.2504), (28.5501, 77.3504)]
+- IMPORTANT: ERA5-Land is a coarse-resolution meteorological dataset.
+  The 500m analytical grid is used as the project's common spatial indexing
+  framework; it does not imply 500m weather measurement resolution.
+
+Temporal Aggregation Rules & Units:
+-------------------------------------------------------------
+- era5_temperature_mean: Monthly average 2m air temperature (°C = K - 273.15)
+- era5_temperature_min:  Monthly minimum 2m air temperature (°C = K - 273.15)
+- era5_temperature_max:  Monthly maximum 2m air temperature (°C = K - 273.15)
+- era5_precipitation_total: Monthly sum of hourly precipitation (mm = m * 1000)
+- era5_wind_speed_mean:  Monthly mean of hourly wind speed sqrt(u10^2 + v10^2) (m/s)
+- era5_wind_speed_max:   Monthly maximum of hourly wind speed (m/s)
+- era5_observation_count: Total valid hourly records in the month (expected: 744)
+
+Summary Statistics (460 Cells):
+-------------------------------------------------------------
+Grid Cells Processed:          460
+Cells with Valid Data:         460 (100.0%)
+Cells with Missing Data:       0 (0.0%)
+Temporal Coverage:             100.0% (744/744 hours)
+
+Metric                         Min       Max       Mean      Std
+-------------------------------------------------------------
+Temperature Mean (°C)          21.5559   21.5749   21.5654   0.0095
+Temperature Min (°C)           8.8825   8.9821   8.9323   0.0499
+Temperature Max (°C)           36.0037   36.0760   36.0398   0.0362
+Precipitation Total (mm)       39.4606   40.5181   39.9894   0.5293
+Wind Speed Mean (m/s)          2.5023   2.5074   2.5049   0.0025
+Wind Speed Max (m/s)           7.2620   7.3361   7.2990   0.0371
+Hourly Observation Count       744       744       744.0     0.0
+
+Missing Data & Physical Integrity:
+-------------------------------------------------------------
+- Missing data is represented strictly as NaN (never zero-imputed).
+- Zero precipitation represents dry weather, distinct from missing data.
+- All 460 analytical cells have complete 744-hour data from ERA5-Land.
+
+Outputs:
+  - Feature Parquet:      C:\Cllg_code_and_files\7th_sem\minor-project\data\processed\era5_features.parquet
+  - Feature CSV:          C:\Cllg_code_and_files\7th_sem\minor-project\data\processed\era5_features.csv
+  - Processing Timestamp: 2026-09-18 17:20:38
+=============================================================

@@ -45,6 +45,7 @@ GEE_DATASETS = {
     "sentinel2": "COPERNICUS/S2_SR_HARMONIZED",
     "viirs": "NOAA/VIIRS/DNB/MONTHLY_V1/VCMSLCFG",
     "era5": "ECMWF/ERA5_LAND/MONTHLY_AGGR",
+    "era5_hourly": "ECMWF/ERA5_LAND/HOURLY",
 }
 
 # Phase 1: Sentinel-2 Ingestion Parameters (Configurable)
@@ -56,4 +57,9 @@ DEFAULT_MAX_CLOUD_PERCENT = int(os.getenv("S2_MAX_CLOUD_PERCENT", "20"))
 DEFAULT_VIIRS_START_DATE = os.getenv("VIIRS_START_DATE", "2024-03-01")
 DEFAULT_VIIRS_END_DATE = os.getenv("VIIRS_END_DATE", "2024-04-01")
 VIIRS_NATIVE_SCALE = 463.8312  # meters (approximate native pixel resolution of VIIRS 15 arc-second product)
+
+# Phase 3: ERA5-Land Weather Parameters (Configurable)
+DEFAULT_ERA5_START_DATE = os.getenv("ERA5_START_DATE", "2024-03-01")
+DEFAULT_ERA5_END_DATE = os.getenv("ERA5_END_DATE", "2024-04-01")
+ERA5_NATIVE_SCALE = 11132.0  # meters (~0.1 degrees, native spatial resolution of ERA5-Land)
 
