@@ -1,0 +1,33 @@
+=============================================================
+ Sentinel-2 Phase 1 Processing Report
+=============================================================
+AOI:                      Delhi-NCR Study Area (BBOX: 77.25-77.35 E, 28.50-28.60 N)
+Grid Source:              study_grid.geojson
+CRS (Projected):          EPSG:32643 (UTM Zone 43N)
+CRS (Geographic):         EPSG:4326
+Grid Cells:               460 (23 rows x 20 columns, ~500m resolution)
+Date Range:               2024-03-01 -> 2024-03-31
+Scenes before filtering:  6
+Scenes after filtering:   4
+Scene Cloud Threshold:    <= 20%
+Pixel Cloud Masking:      Sentinel-2 L2A SCL (Scene Classification Layer)
+                          [Masked: 0, 1, 3, 8, 9, 10, 11 | Kept: 2, 4, 5, 6, 7]
+Composite Method:         Temporal Median Composite
+Scale for Reduction:      20 meters (polygonal reduceRegions)
+
+Feature Statistics:
+-------------------------------------------------------------
+Cells with valid data:    460 (100.0%)
+Cells with missing data:  0 (0.0%)
+
+Metric           Min       Max       Mean      Std
+NDVI (mean)      -0.2952    0.6809    0.2881    0.1227
+NDBI (mean)      -0.3841    0.0788    -0.0354    0.0675
+NDWI (mean)      -0.6368    0.3046    -0.3192    0.1133
+Valid Pixels     624       650       636.4     7.5
+
+Outputs:
+  - Feature Parquet:      C:\Cllg_code_and_files\7th_sem\minor-project\data\processed\s2_features.parquet
+  - Feature CSV:          C:\Cllg_code_and_files\7th_sem\minor-project\data\processed\s2_features.csv
+  - Processing Timestamp: 2026-09-18 16:10:05
+=============================================================

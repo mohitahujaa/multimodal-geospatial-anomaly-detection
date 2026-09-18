@@ -1,0 +1,29 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caches & Environments
+.venv/
+env/
+venv/
+ENV/
+.env
+,env
+*.env
+
+# Data caches (do not commit raw imagery or large GeoTIFFs)
+data/raw/
+*.tif
+*.tiff
+*.nc
+*.h5
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
