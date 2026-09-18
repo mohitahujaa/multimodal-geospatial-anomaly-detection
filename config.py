@@ -52,3 +52,8 @@ DEFAULT_START_DATE = os.getenv("S2_START_DATE", "2024-03-01")
 DEFAULT_END_DATE = os.getenv("S2_END_DATE", "2024-03-31")
 DEFAULT_MAX_CLOUD_PERCENT = int(os.getenv("S2_MAX_CLOUD_PERCENT", "20"))
 
+# Phase 2: VIIRS Nighttime Lights Parameters (Configurable)
+DEFAULT_VIIRS_START_DATE = os.getenv("VIIRS_START_DATE", "2024-03-01")
+DEFAULT_VIIRS_END_DATE = os.getenv("VIIRS_END_DATE", "2024-04-01")
+VIIRS_NATIVE_SCALE = 463.8312  # meters (approximate native pixel resolution of VIIRS 15 arc-second product)
+

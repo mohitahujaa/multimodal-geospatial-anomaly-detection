@@ -1,0 +1,47 @@
+=============================================================
+ VIIRS Nighttime Lights Phase 2 Processing Report
+=============================================================
+Dataset ID:               NOAA/VIIRS/DNB/MONTHLY_V1/VCMSLCFG
+Dataset Name:             VIIRS Stray Light Corrected Day/Night Band Monthly (VCMSLCFG)
+Bands Used:               avg_rad (DNB radiance), cf_cvg (cloud-free coverage count)
+Native Pixel Resolution:  ~463.83 meters (15 arc-seconds)
+Study Area Bounding Box:  [77.25, 28.5] to [77.35, 28.6] (WGS84)
+Spatial Analysis Grid:    study_grid.geojson (460 cells, ~500m x 500m)
+Aggregation CRS:          EPSG:32643 (UTM Zone 43N)
+Date Range:               [2024-03-01, 2024-04-01)
+Monthly Images Ingested:  1 (Acquisition: 2024-03-01)
+
+Aggregation Method:
+-------------------------------------------------------------
+- Polygonal reduceRegions over complete cell boundary
+- Scale: 463.83 m
+- avg_rad: mean, stdDev, count
+- cf_cvg: mean, min, max
+- valid_pixel_fraction: mean of binary valid mask over polygon [0.0, 1.0]
+
+Feature Statistics:
+-------------------------------------------------------------
+Grid Cells Processed:     460
+Cells with Valid Data:    460 (100.0%)
+Cells with Missing Data:  0 (0.0%)
+
+Metric                       Min       Max       Mean      Std
+-------------------------------------------------------------
+viirs_avg_rad_mean (nW/cm2)  10.5572   109.2930   46.7971   19.3395
+viirs_cf_cvg_mean (obs)      13.0      16.0      14.8      0.7
+viirs_valid_pixel_count      2         6         3.9       0.6
+viirs_valid_pixel_fraction   1.0000    1.0000    1.0000    0.0000
+
+Data Representation & Masking Decisions:
+-------------------------------------------------------------
+- Zero radiance (avg_rad == 0) is NOT treated as no observations/missing data.
+- Missing data is represented strictly as NaN (never zero-imputed).
+- cf_cvg is retained as an observation quality indicator, not as a filtering cutoff.
+- Native VIIRS pixel resolution is ~463.83m; aggregation over the ~500m grid represents
+  spatial re-binning onto the project analysis framework, not sub-pixel resolution.
+
+Outputs:
+  - Feature Parquet:      C:\Cllg_code_and_files\7th_sem\minor-project\data\processed\viirs_features.parquet
+  - Feature CSV:          C:\Cllg_code_and_files\7th_sem\minor-project\data\processed\viirs_features.csv
+  - Processing Timestamp: 2026-09-18 16:39:45
+=============================================================
