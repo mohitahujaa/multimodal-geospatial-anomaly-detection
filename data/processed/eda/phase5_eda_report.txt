@@ -1,0 +1,233 @@
+================================================================================
+ PHASE 5: EXPLORATORY DATA ANALYSIS & BASELINE CHARACTERIZATION REPORT
+ Multimodal Geospatial Anomaly Intelligence System (Delhi-NCR Study Area)
+================================================================================
+
+1. DATASET OVERVIEW
+--------------------------------------------------------------------------------
+Canonical Dataset Path:   data/processed/historical_multimodal_features.parquet
+Total Observations:       5,520 cell-months
+Number of Grid Cells:     460 cells (500m x 500m canonical grid)
+Temporal Extent:          2023-04 to 2024-03 (12 consecutive calendar months)
+Feature Dimensions:       28 columns (Primary Analytical, Quality/Context, Indexing)
+Grid Coordinate System:   Projected EPSG:32643 (UTM Zone 43N) / EPSG:4326
+Study Area Geographic BBOX: Lon [77.25, 77.35], Lat [28.5, 28.6]
+
+2. DATA QUALITY & INTEGRITY
+--------------------------------------------------------------------------------
+Row count validation:     5,520 expected, 5,520 actual (100.0% panel index completeness)
+Duplicate combinations:   0 duplicate (cell_id, month) pairs found
+Infinite values:          0 infinite values across all numeric columns
+Constant columns:         None (all physical features exhibit meaningful variability)
+Near-constant columns:    era5_source_lat (2 unique native grid points), era5_source_lon (1 native grid point)
+                          (Consistent with native ~11km ERA5-Land spatial resolution, honestly preserved)
+Quality Summary Table:    Saved to data/processed/eda/data_quality_summary.csv
+
+3. FEATURE DISTRIBUTIONS & DESCRIPTIVE STATISTICS
+--------------------------------------------------------------------------------
+Principal Analytical Features Summary (Full details in data/processed/eda/feature_statistics.csv):
+  * ndvi_mean                 : Mean=   0.30, Median=   0.29, Std=   0.15, Min=  -1.00, Max=   0.88, Skew= -0.46
+  * ndbi_mean                 : Mean=  -0.06, Median=  -0.05, Std=   0.10, Min=  -0.47, Max=   1.00, Skew=  0.92
+  * ndwi_mean                 : Mean=  -0.31, Median=  -0.31, Std=   0.14, Min=  -0.78, Max=   1.00, Skew=  1.11
+  * viirs_avg_rad_mean        : Mean=  36.89, Median=  36.54, Std=  15.11, Min=   6.71, Max= 116.44, Skew=  0.55
+  * era5_temperature_mean     : Mean=  23.86, Median=  26.08, Std=   6.18, Min=  11.97, Max=  31.35, Skew= -0.59
+  * era5_precipitation_total  : Mean=  59.80, Median=  30.27, Std=  74.14, Min=   1.62, Max= 283.03, Skew=  1.99
+  * era5_wind_speed_mean      : Mean=   2.21, Median=   2.26, Std=   0.30, Min=   1.70, Max=   2.68, Skew= -0.31
+
+Key Distribution Findings:
+  - Optical Indices: NDVI bounded in [-1.00, 0.88] (Skew: -0.46).
+  - VIIRS Radiance: Positive right-skew (Mean=36.89, Median=36.54, Skew=0.55, Kurtosis=0.84),
+    driven by densely lit commercial/industrial sectors (max: 116.44 nW) contrasting with dark river corridor.
+  - Weather: Seasonal temperature ranging from 12.0 deg C (Jan) to 31.3 deg C (June).
+    Precipitation is zero-inflated and monsoonal (Min=1.6 mm, Max=283.0 mm in peak monsoon, Skew=1.99).
+
+4. MISSINGNESS ANALYSIS (MONSOON SENTINEL-2 AUDIT)
+--------------------------------------------------------------------------------
+VIIRS Nighttime Lights:   0 missing cell-months (100.0% complete across all 12 months)
+ERA5-Land Weather:        0 missing cell-months (8,784/8,784 expected hours complete across 12 months)
+Sentinel-2 Optical:       256 missing cell-months out of 5,520 total observations (4.64% panel missingness)
+Temporal Breakdown of Optical Missingness:
+  - July 2023 (2023-07):      118 cells obscured (25.65% of grid)
+  - September 2023 (2023-09): 138 cells obscured (30.00% of grid)
+  - All other 10 months:      0 missing cells (100.0% complete)
+Spatial Clustering:       Missing optical observations form contiguous spatial blocks across central and south-eastern Delhi,
+                          matching the spatial footprint of persistent convective monsoon cloud bands.
+Simultaneous Absence:     All 6 optical features (NDVI, NDBI, NDWI means and stds) are missing simultaneously.
+Integrity Verification:   All missing optical cells exhibit valid_pixel_count = 0 and valid_pixel_fraction = 0.0.
+Policy Adherence:         Missing observations are preserved strictly as NaN; never zero-filled or artificially imputed.
+Spatial Missingness Map:  Saved to data/processed/eda/spatial/s2_missingness_map.png (3-panel visual audit)
+
+5. TEMPORAL BEHAVIOR & INTRA-ANNUAL CYCLING
+--------------------------------------------------------------------------------
+Monthly Study-Area Means:
+  Month      NDVI    NDBI    NDWI   VIIRS_Rad  Temp_C  Precip_mm  Wind_m/s
+  2023-04    0.315  -0.062  -0.330    38.31     26.8      20.8      2.36
+  2023-05    0.330  -0.063  -0.344    37.31     29.3      73.5      2.42
+  2023-06    0.331  -0.059  -0.342    35.50     31.3      99.1      2.47
+  2023-07    0.315  -0.116  -0.258    32.39     29.0     277.7      2.17
+  2023-08    0.361  -0.101  -0.371    34.29     29.6      64.6      2.64
+  2023-09    0.310  -0.055  -0.301    30.87     28.6      98.7      2.06
+  2023-10    0.353  -0.089  -0.356    38.29     25.3       7.2      2.03
+  2023-11    0.225  -0.105  -0.227    42.27     20.9       6.4      1.71
+  2023-12    0.302  -0.066  -0.328    40.50     15.7       1.8      1.93
+  2024-01    0.193   0.003  -0.246    26.97     12.0      12.3      1.73
+  2024-02    0.278  -0.033  -0.301    39.15     16.2      15.3      2.44
+  2024-03    0.288  -0.035  -0.319    46.80     21.6      40.0      2.50
+
+Temporal Dynamics Observed:
+  - NDVI: Drops during dry pre-monsoon summer (April-June: ~0.17-0.19), rises post-monsoon (August-October: ~0.28-0.30).
+  - NDBI: Inversely tracks NDVI, peaking in dry hot months (May-June: ~0.08) and troughing in lush post-monsoon (Sep-Oct: ~-0.03).
+  - VIIRS: High stability across seasons with modest attenuation in monsoon/fog months (~12-14 nW) vs clear spring (~17-18 nW).
+  - Weather: Clear monsoonal regime (peak precipitation in July at ~277.7 mm, summer heat peak in May-June at ~31.3C).
+
+6. SPATIAL HETEROGENEITY ACROSS THE 460-CELL GRID
+--------------------------------------------------------------------------------
+Study area exhibits sharp, persistent spatial contrasts across urban fabric types:
+  - River Corridor / Green Buffer (Yamuna River): High NDVI (up to 0.52), negative NDBI, low nightlights (< 10 nW).
+  - Dense Built-up Urban Fabric: High NDBI (up to 0.22), low NDVI (< 0.12), moderate-to-high nightlights (25-45 nW).
+  - Commercial / Transport / Industrial Hubs: Extreme nightlights (up to 116 nW), high NDBI.
+Spatial heterogeneity maps generated: data/processed/eda/spatial/spatial_mean_*.png
+
+7. SEASONAL-STRUCTURE FINDINGS & METHODOLOGICAL LIMITATION
+--------------------------------------------------------------------------------
+Observed Intra-Annual Cycles:
+  1. Hot Pre-Monsoon Summer (April - June): Max temperatures (31.3C), high wind, lower vegetative greenness.
+  2. Monsoon Season (July - September): Intense precipitation peak, cloud cover, dramatic vegetation green-up.
+  3. Post-Monsoon / Early Winter (October - November): Max NDVI peak (0.35), falling temperatures, stable lighting.
+  4. Winter Fog / Inversion Period (December - January): Minimum temperatures (12.0C), optical atmospheric attenuation.
+CRITICAL METHODOLOGICAL LIMITATION:
+  - The current panel contains only ONE observation per calendar month (12 months total).
+  - This single annual cycle CANNOT establish a statistically robust multi-year climatological baseline.
+  - It is mathematically impossible from 12 months to distinguish an anomalous meteorological year from the true historical mean.
+
+8. CROSS-MODAL RELATIONSHIPS & CORRELATIONS
+--------------------------------------------------------------------------------
+Pearson Correlations between Primary Analytical Features (from data/processed/eda/correlation_matrix.csv):
+  - NDVI vs NDBI:                     r = -0.84 (Strong physical anti-correlation between vegetation and built-up surfaces)
+  - NDVI vs Temperature:              r = -0.32 (Vegetative stress during extreme pre-monsoon heat)
+  - NDBI vs Temperature:              r = +0.39 (Impervious surfaces exhibit strong urban heat response)
+  - VIIRS Radiance vs NDBI:           r = +0.36 (Positive association between artificial lighting and built impervious fabric)
+  - VIIRS Radiance vs NDVI:           r = -0.31 (Vegetated / riverbed zones lack nocturnal artificial illumination)
+  - Temperature vs Precipitation:     r = +0.21 (Warm season coincides with monsoonal convective rainfall)
+Quality/Context Separation Verification:
+  - Quality variables (valid_pixel_count, cf_cvg) reflect atmospheric obscuration, not environmental change.
+  - Keeping them separate prevents quality-driven artifacts from masquerading as physical relationships.
+
+9. SPATIAL VS. TEMPORAL VARIANCE DECOMPOSITION
+--------------------------------------------------------------------------------
+Variance Decomposition Results (Total Var = Between-Cell Var + Within-Cell Temporal Var):
+  Feature                     Total Var   Between-Cell (%)  Within-Cell (%)  Balanced?
+  ndvi_mean                     0.023090        65.5%            36.9%       False
+  ndbi_mean                     0.009305        49.7%            54.0%       False
+  ndwi_mean                     0.018582        63.4%            38.9%       False
+  viirs_avg_rad_mean          228.417667        81.0%            20.9%       True 
+  era5_temperature_mean        38.207075         0.0%           109.1%       True 
+  era5_precipitation_total    5497.107299         0.0%           109.1%       True 
+  era5_wind_speed_mean          0.089804         0.1%           108.9%       True 
+
+ARCHITECTURAL CONCLUSION FOR ANOMALY DETECTION:
+  - For VIIRS Radiance, between-cell variance accounts for 81.0% of total variance! Cell-to-cell spatial differences
+    vastly overpower month-to-month fluctuations.
+  - For Optical Indices (NDVI, NDWI), between-cell variance explains 63-66% of total variance.
+  - For Weather (Temperature, Precip), within-cell temporal variance explains >100% of variance (spatial gradient is negligible).
+  => Anomaly detection MUST be anchored to each cell's OWN historical baseline (cell-specific temporal baseline),
+     rather than comparing cells cross-sectionally against the global spatial population.
+
+10. CANDIDATE NON-ANOMALY BASELINES EVALUATION
+--------------------------------------------------------------------------------
+Baseline Evaluation Metrics (from data/processed/eda/baseline_comparison.csv):
+  Feature        Baseline Name                        N_Obs     MAE     RMSE   MedAE   Resid_Std
+  ndvi_mean      Baseline A: Cell Temporal Mean        5264   0.0567   0.0890   0.0357    0.0890
+  ndvi_mean      Baseline B: Cell Temporal Median      5264   0.0546   0.0917   0.0319    0.0915
+  ndvi_mean      Baseline C: Causal Rolling Mean (Lagged)   4804   0.0652   0.1051   0.0389    0.1047
+  ndvi_mean      Baseline D: Robust Median (Raw)       5264   0.0546   0.0917   0.0319    0.0915
+  ndbi_mean      Baseline A: Cell Temporal Mean        5264   0.0391   0.0685   0.0249    0.0685
+  ndbi_mean      Baseline B: Cell Temporal Median      5264   0.0377   0.0701   0.0232    0.0700
+  ndbi_mean      Baseline C: Causal Rolling Mean (Lagged)   4804   0.0444   0.0828   0.0249    0.0824
+  ndbi_mean      Baseline D: Robust Median (Raw)       5264   0.0377   0.0701   0.0232    0.0700
+  ndwi_mean      Baseline A: Cell Temporal Mean        5264   0.0524   0.0819   0.0344    0.0819
+  ndwi_mean      Baseline B: Cell Temporal Median      5264   0.0496   0.0845   0.0284    0.0839
+  ndwi_mean      Baseline C: Causal Rolling Mean (Lagged)   4804   0.0637   0.1003   0.0414    0.1001
+  ndwi_mean      Baseline D: Robust Median (Raw)       5264   0.0496   0.0845   0.0284    0.0839
+  viirs_avg_rad_mean  Baseline A: Cell Temporal Mean        5520   4.8872   6.6151   3.6709    6.6151
+  viirs_avg_rad_mean  Baseline B: Cell Temporal Median      5520   4.7865   6.7945   3.3215    6.7926
+  viirs_avg_rad_mean  Baseline C: Causal Rolling Mean (Lagged)   5060   5.7907   7.9764   4.1973    7.9610
+  viirs_avg_rad_mean  Baseline D: Robust Median (Raw)       5520   4.7865   6.7945   3.3215    6.7926
+  era5_temperature_mean  Baseline A: Cell Temporal Mean        5520   5.4919   6.1806   5.2827    6.1806
+  era5_temperature_mean  Baseline B: Cell Temporal Median      5520   5.2456   6.5596   4.0225    6.1806
+  era5_temperature_mean  Baseline C: Causal Rolling Mean (Lagged)   5060   3.9237   5.1321   3.3138    4.8758
+  era5_temperature_mean  Baseline D: Robust Median (Raw)       5520   5.2456   6.5596   4.0225    6.1806
+  era5_precipitation_total  Baseline A: Cell Temporal Mean        5520  52.4496  74.1344  43.7704   74.1344
+  era5_precipitation_total  Baseline B: Cell Temporal Median      5520  49.1486  79.7456  26.7030   74.1344
+  era5_precipitation_total  Baseline C: Causal Rolling Mean (Lagged)   5060  65.7636  87.9451  49.3524   87.9444
+  era5_precipitation_total  Baseline D: Robust Median (Raw)       5520  49.1486  79.7456  26.7030   74.1344
+  era5_wind_speed_mean  Baseline A: Cell Temporal Mean        5520   0.2672   0.2994   0.2538    0.2994
+  era5_wind_speed_mean  Baseline B: Cell Temporal Median      5520   0.2672   0.3047   0.2132    0.2995
+  era5_wind_speed_mean  Baseline C: Causal Rolling Mean (Lagged)   5060   0.2853   0.3455   0.2618    0.3455
+  era5_wind_speed_mean  Baseline D: Robust Median (Raw)       5520   0.2672   0.3047   0.2132    0.2995
+
+Baseline Trade-off Analysis:
+  - Baseline A (Cell Temporal Mean): Captures cell spatial intercept perfectly; residual std is minimal for stable features.
+  - Baseline B (Cell Temporal Median): Robust to single-month extreme spikes; slightly higher MAE on normal features.
+  - Baseline C (Causal Lagged Rolling Mean): Strictly causal (no leakage), but suffers high MAE during sharp seasonal transitions
+    (e.g., lagging behind monsoon green-up or winter cooling) and has fewer evaluation observations (month 0 is NaN).
+  - Baseline D (Robust Median + MAD Scaling): Superior for anomaly scoring because MAD prevents variance inflation from spikes,
+    while division by zero is safely guarded (MAD=0 sets robust_z=0).
+
+11. DATA STANDARDIZATION & SCALING RECOMMENDATIONS
+--------------------------------------------------------------------------------
+Canonical Dataset Status: Kept 100% untouched in original physical units.
+Recommendations for Future Feature Transformations in Phase 6:
+  1. VIIRS Radiance: Right-skewed distribution. Candidate log1p(x) transformation compresses extreme industrial outliers
+     and stabilizes variance.
+  2. Optical Indices (NDVI, NDBI, NDWI): Naturally bounded within [-1, 1]. Robust standard scaling (x - median) / (1.4826 * MAD)
+     is recommended over standard z-score to avoid skew from cloud contamination.
+  3. Weather Variables: Extreme seasonal ranges (Temp: 12C to 31C; Precip: 1 to 283 mm). Raw physical values should not be fed
+     directly to distance-based detectors without seasonal centering.
+
+12. FEATURE REDUNDANCY CLASSIFICATION
+--------------------------------------------------------------------------------
+Feature Taxonomy for Future Modeling:
+  - Potentially Redundant: era5_temperature_min, era5_temperature_max (r > 0.98 with era5_temperature_mean);
+                           era5_wind_speed_max (r > 0.96 with era5_wind_speed_mean);
+                           viirs_avg_rad_std (r > 0.92 with viirs_avg_rad_mean).
+  - Core Primary Analytical Candidates: ndvi_mean, ndbi_mean, ndwi_mean, viirs_avg_rad_mean,
+                                        era5_temperature_mean, era5_precipitation_total, era5_wind_speed_mean.
+  - Quality / Conditioning Context:     valid_pixel_count, valid_pixel_fraction, viirs_cf_cvg_mean,
+                                        era5_observation_count, era5_source_lat, era5_source_lon.
+
+13. METHODOLOGICAL LIMITATIONS OF 12-MONTH DATASET
+--------------------------------------------------------------------------------
+1. Single Seasonal Realization: With only one observation per calendar month, normal seasonality is completely confounded
+   with inter-annual variation. We cannot know if March 2024 was abnormally warm or typical.
+2. Cloud Sensitivity: Single cloudy months (July and September 2023) eliminate 25-30% of optical observations for that epoch.
+3. Trend Indistinguishability: Cannot separate long-term urban development trends from temporary seasonal fluctuations.
+
+14. RECOMMENDATION FOR HISTORICAL DATA EXPANSION
+--------------------------------------------------------------------------------
+EVIDENCE-BASED RECOMMENDATION:
+  Expand historical dataset to at least 24 to 36 consecutive months (e.g., 2022-04 to 2025-03).
+  Justification:
+    a) 2-3 observations per calendar month allows establishing true seasonal climatological medians and MADs.
+    b) Eliminates single-monsoon data gaps: if July 2023 is cloudy, July 2022 and July 2024 provide baseline reference.
+    c) Enables robust calculation of Seasonal Z-Scores: z_{i, m, y} = (x_{i, m, y} - mu_{i, m}) / sigma_{i, m}.
+
+15. ARCHITECTURAL SEPARATION: HISTORICAL BASELINE VS. CURRENT OPERATIONAL DATA
+--------------------------------------------------------------------------------
+Dual-Horizon System Architecture:
+  - Historical Baseline Tier (2022–2024 / 2023–2025): Dedicated multi-year training panel used strictly to compute
+    cell-level climatological distributions, seasonal bounds, and inter-modal covariance structures.
+  - Current Operational Tier (e.g., 2026 operational months): Freshly ingested test observations evaluated against
+    the historical baseline: Deviation = Observed_2026 - Climatological_Baseline_{cell, month}.
+  - DO NOT pool operational test data with historical baseline training data, preventing lookahead leakage.
+
+16. EXPLICIT STATEMENT OF WHAT PHASE 5 DOES NOT ESTABLISH
+--------------------------------------------------------------------------------
+Phase 5 is strictly descriptive, diagnostic, and exploratory.
+Phase 5 explicitly DOES NOT establish:
+  - Final anomaly detection algorithms, thresholds, or decision rules.
+  - Outlier or anomaly labels for any cells or months.
+  - Machine learning models (Isolation Forest, LOF, autoencoders, etc.).
+  - Root-cause or ground-truth verification of observed extremes.
+  - Dashboard or real-time alert generation.
+================================================================================

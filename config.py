@@ -69,3 +69,21 @@ HISTORICAL_END_DATE = os.getenv("HISTORICAL_END_DATE", "2024-04-01")
 HISTORICAL_PLOTS_DIR = PROCESSED_DATA_DIR / "plots" / "historical"
 HISTORICAL_PLOTS_DIR.mkdir(parents=True, exist_ok=True)
 
+# Phase 5: EDA & Baseline Characterization Directories
+EDA_DIR = PROCESSED_DATA_DIR / "eda"
+EDA_DISTRIBUTIONS_DIR = EDA_DIR / "distributions"
+EDA_TEMPORAL_DIR = EDA_DIR / "temporal"
+EDA_SPATIAL_DIR = EDA_DIR / "spatial"
+EDA_CORRELATION_DIR = EDA_DIR / "correlation"
+EDA_BASELINES_DIR = EDA_DIR / "baselines"
+
+for d in [EDA_DIR, EDA_DISTRIBUTIONS_DIR, EDA_TEMPORAL_DIR, EDA_SPATIAL_DIR, EDA_CORRELATION_DIR, EDA_BASELINES_DIR]:
+    d.mkdir(parents=True, exist_ok=True)
+
+# Phase 5.5: 36-Month Historical Expansion & 2026 Operational Split
+HISTORICAL_36M_START_DATE = os.getenv("HISTORICAL_36M_START_DATE", "2022-04-01")
+HISTORICAL_36M_END_DATE = os.getenv("HISTORICAL_36M_END_DATE", "2025-04-01")  # exclusive
+
+OPERATIONAL_START_DATE = os.getenv("OPERATIONAL_START_DATE", "2026-01-01")
+OPERATIONAL_END_DATE = os.getenv("OPERATIONAL_END_DATE", "2026-07-01")  # exclusive (6 complete months: Jan-Jun)
+

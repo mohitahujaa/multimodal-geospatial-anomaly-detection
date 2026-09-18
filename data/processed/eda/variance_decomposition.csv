@@ -1,0 +1,8 @@
+feature,total_variance,between_cell_variance,within_cell_variance,pct_between_cell,pct_within_cell,min_obs_per_cell,max_obs_per_cell,balanced_panel
+ndvi_mean,0.02309,0.015114,0.00853,65.46,36.94,10,12,False
+ndbi_mean,0.009305,0.004627,0.005025,49.73,54.01,10,12,False
+ndwi_mean,0.018582,0.011788,0.007225,63.44,38.88,10,12,False
+viirs_avg_rad_mean,228.417667,185.018714,47.73795,81.0,20.9,12,12,True
+era5_temperature_mean,38.207075,0.000378,41.672482,0.0,109.07,12,12,True
+era5_precipitation_total,5497.107299,0.203698,5995.536209,0.0,109.07,12,12,True
+era5_wind_speed_mean,0.089804,0.000118,0.097822,0.13,108.93,12,12,True

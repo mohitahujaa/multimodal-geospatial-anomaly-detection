@@ -1,0 +1,98 @@
+================================================================================
+ PHASE 5.5: 36-MONTH HISTORICAL EXPANSION & 2026 OPERATIONAL SPLIT REPORT
+ Multimodal Geospatial Anomaly Intelligence System (Delhi-NCR)
+================================================================================
+
+1. TEMPORAL ARCHITECTURE & DATASET OVERVIEW
+--------------------------------------------------------------------------------
+Dual-Horizon Separation:
+  Historical Baseline Tier:   2022-04-01 to 2025-04-01 (36 consecutive calendar months)
+                              Rows: 16,560 (460 cells x 36 months)
+                              Table: data/processed/historical_36m_multimodal_features.parquet
+  Intermediate Buffer Period: 2025-04-01 to 2025-12-31 (9-month frozen buffer between baseline and testing)
+  Operational Evaluation Tier: 2026-01-01 to 2026-07-01 (6 consecutive months: Jan-Jun 2026, July excluded)
+                              Rows: 2,760 (460 cells x 6 months)
+                              Table: data/processed/operational_2026_multimodal_features.parquet
+  Grid Specification:         Canonical 460-cell 500m grid, EPSG:32643 / EPSG:4326
+  Indexing Completeness:      Zero duplicate (cell_id, month) pairs in both panels.
+
+2. 36-MONTH HISTORICAL INGESTION COMPLETENESS (2022-04 TO 2025-03)
+--------------------------------------------------------------------------------
+Month       Valid S2 Cells   VIIRS Imgs   ERA5 Hours (Actual/Expected)
+2022-04        460/460              1            720/ 720 (100.0%)
+2022-05        460/460              1            744/ 744 (100.0%)
+2022-06        460/460              1            720/ 720 (100.0%)
+2022-07        447/460              1            744/ 744 (100.0%)
+2022-08        450/460              1            744/ 744 (100.0%)
+2022-09        442/460              1            720/ 720 (100.0%)
+2022-10        460/460              1            744/ 744 (100.0%)
+2022-11        460/460              1            720/ 720 (100.0%)
+2022-12        460/460              1            744/ 744 (100.0%)
+2023-01        460/460              1            744/ 744 (100.0%)
+2023-02        460/460              1            672/ 672 (100.0%)
+2023-03        460/460              1            744/ 744 (100.0%)
+2023-04        460/460              1            720/ 720 (100.0%)
+2023-05        460/460              1            744/ 744 (100.0%)
+2023-06        460/460              1            720/ 720 (100.0%)
+2023-07        342/460              1            744/ 744 (100.0%)
+2023-08        460/460              1            744/ 744 (100.0%)
+2023-09        322/460              1            720/ 720 (100.0%)
+2023-10        460/460              1            744/ 744 (100.0%)
+2023-11        460/460              1            720/ 720 (100.0%)
+2023-12        460/460              1            744/ 744 (100.0%)
+2024-01        460/460              1            744/ 744 (100.0%)
+2024-02        460/460              1            696/ 696 (100.0%)
+2024-03        460/460              1            744/ 744 (100.0%)
+2024-04        460/460              1            720/ 720 (100.0%)
+2024-05        460/460              1            744/ 744 (100.0%)
+2024-06        460/460              1            720/ 720 (100.0%)
+2024-07          0/460              1            744/ 744 (100.0%)
+2024-08        434/460              1            744/ 744 (100.0%)
+2024-09        460/460              1            720/ 720 (100.0%)
+2024-10        460/460              1            744/ 744 (100.0%)
+2024-11        460/460              1            720/ 720 (100.0%)
+2024-12        460/460              1            744/ 744 (100.0%)
+2025-01        460/460              1            744/ 744 (100.0%)
+2025-02        460/460              1            672/ 672 (100.0%)
+2025-03        460/460              1            744/ 744 (100.0%)
+
+3. 2026 OPERATIONAL INGESTION COMPLETENESS (2026-01 TO 2026-06)
+--------------------------------------------------------------------------------
+Month       Valid S2 Cells   VIIRS Imgs   ERA5 Hours (Actual/Expected)
+2026-01        460/460              1            744/ 744 (100.0%)
+2026-02        460/460              1            672/ 672 (100.0%)
+2026-03        460/460              1            744/ 744 (100.0%)
+2026-04        460/460              1            720/ 720 (100.0%)
+2026-05        460/460              1            744/ 744 (100.0%)
+2026-06        460/460              1            720/ 720 (100.0%)
+
+4. MISSINGNESS AUDIT & PHYSICAL DATA INTEGRITY
+--------------------------------------------------------------------------------
+Historical 36m S2 Missingness:   783 / 16560 cell-months (4.73%)
+Operational 2026 S2 Missingness:  0 / 2760 cell-months (0.00%)
+VIIRS Nighttime Lights:          0 missing cell-months across both panels (100.0% complete)
+ERA5-Land Weather:               0 missing cell-months across both panels (100.0% hourly completeness)
+Missingness Policy:              Preserved strictly as NaN; never zero-filled or artificially imputed.
+
+5. HISTORICAL SEASONAL CLIMATOLOGY AUDIT (36-MONTH BASELINE)
+--------------------------------------------------------------------------------
+Climatology Records:       38,640 parameter profiles (460 cells x 12 calendar months x 7 core features)
+Table Path:                data/processed/historical_cell_climatology_36m.csv
+Fields Computed:           n_observations, mean, median, std, mad, q1, q3, iqr, min, max, zero_mad_flag
+Zero-MAD Profiles:         399 / 38640 (1.03%) safely guarded (robust_z -> NaN)
+Primary Robust Baseline:   z_robust = (x - median) / (1.4826 * MAD) where MAD > 0
+
+6. MARCH 2024 BENCHMARK REGRESSION INVARIANT CHECK
+--------------------------------------------------------------------------------
+Sentinel-2 NDVI:   Max Absolute Diff = 0.000000e+00 (Threshold: < 1e-6) -> PASSED
+VIIRS Radiance:    Max Absolute Diff = 0.000000e+00 (Threshold: < 1e-6) -> PASSED
+ERA5 Temperature:  Max Absolute Diff = 0.000000e+00 (Threshold: < 1e-6) -> PASSED
+Status:            Bitwise / floating-point invariant perfectly preserved against original Phase 1-3 files.
+
+7. MARCH 2026 OPERATIONAL DIAGNOSTIC PROTOTYPE
+--------------------------------------------------------------------------------
+Prototype Output:          data/processed/operational_march2026_diagnostic.csv (460 cells x 7 features = 3,220 records)
+Validation Status:         Phase 5.5 validation / diagnostic only — NOT the final anomaly detector.
+Architecture Ready:        Phase 6 can directly ingest frozen climatology and operational tables without recomputation.
+
+================================================================================

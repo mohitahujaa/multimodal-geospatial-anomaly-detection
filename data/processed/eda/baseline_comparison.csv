@@ -1,0 +1,29 @@
+feature,baseline_name,n_eval_obs,mae,rmse,median_ae,residual_std
+ndvi_mean,Baseline A: Cell Temporal Mean,5264,0.0567,0.089,0.0357,0.089
+ndvi_mean,Baseline B: Cell Temporal Median,5264,0.0546,0.0917,0.0319,0.0915
+ndvi_mean,Baseline C: Causal Rolling Mean (Lagged),4804,0.0652,0.1051,0.0389,0.1047
+ndvi_mean,Baseline D: Robust Median (Raw),5264,0.0546,0.0917,0.0319,0.0915
+ndbi_mean,Baseline A: Cell Temporal Mean,5264,0.0391,0.0685,0.0249,0.0685
+ndbi_mean,Baseline B: Cell Temporal Median,5264,0.0377,0.0701,0.0232,0.07
+ndbi_mean,Baseline C: Causal Rolling Mean (Lagged),4804,0.0444,0.0828,0.0249,0.0824
+ndbi_mean,Baseline D: Robust Median (Raw),5264,0.0377,0.0701,0.0232,0.07
+ndwi_mean,Baseline A: Cell Temporal Mean,5264,0.0524,0.0819,0.0344,0.0819
+ndwi_mean,Baseline B: Cell Temporal Median,5264,0.0496,0.0845,0.0284,0.0839
+ndwi_mean,Baseline C: Causal Rolling Mean (Lagged),4804,0.0637,0.1003,0.0414,0.1001
+ndwi_mean,Baseline D: Robust Median (Raw),5264,0.0496,0.0845,0.0284,0.0839
+viirs_avg_rad_mean,Baseline A: Cell Temporal Mean,5520,4.8872,6.6151,3.6709,6.6151
+viirs_avg_rad_mean,Baseline B: Cell Temporal Median,5520,4.7865,6.7945,3.3215,6.7926
+viirs_avg_rad_mean,Baseline C: Causal Rolling Mean (Lagged),5060,5.7907,7.9764,4.1973,7.961
+viirs_avg_rad_mean,Baseline D: Robust Median (Raw),5520,4.7865,6.7945,3.3215,6.7926
+era5_temperature_mean,Baseline A: Cell Temporal Mean,5520,5.4919,6.1806,5.2827,6.1806
+era5_temperature_mean,Baseline B: Cell Temporal Median,5520,5.2456,6.5596,4.0225,6.1806
+era5_temperature_mean,Baseline C: Causal Rolling Mean (Lagged),5060,3.9237,5.1321,3.3138,4.8758
+era5_temperature_mean,Baseline D: Robust Median (Raw),5520,5.2456,6.5596,4.0225,6.1806
+era5_precipitation_total,Baseline A: Cell Temporal Mean,5520,52.4496,74.1344,43.7704,74.1344
+era5_precipitation_total,Baseline B: Cell Temporal Median,5520,49.1486,79.7456,26.703,74.1344
+era5_precipitation_total,Baseline C: Causal Rolling Mean (Lagged),5060,65.7636,87.9451,49.3524,87.9444
+era5_precipitation_total,Baseline D: Robust Median (Raw),5520,49.1486,79.7456,26.703,74.1344
+era5_wind_speed_mean,Baseline A: Cell Temporal Mean,5520,0.2672,0.2994,0.2538,0.2994
+era5_wind_speed_mean,Baseline B: Cell Temporal Median,5520,0.2672,0.3047,0.2132,0.2995
+era5_wind_speed_mean,Baseline C: Causal Rolling Mean (Lagged),5060,0.2853,0.3455,0.2618,0.3455
+era5_wind_speed_mean,Baseline D: Robust Median (Raw),5520,0.2672,0.3047,0.2132,0.2995
