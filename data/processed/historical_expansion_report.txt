@@ -1,0 +1,97 @@
+=============================================================
+ Phase 4: Historical Temporal Expansion Report
+=============================================================
+Selected Historical Period:   2023-04-01 -> 2024-04-01
+Number of Months:             12
+Months List:                  ['2023-04', '2023-05', '2023-06', '2023-07', '2023-08', '2023-09', '2023-10', '2023-11', '2023-12', '2024-01', '2024-02', '2024-03']
+Number of Grid Cells:         460
+Expected Cell-Month Rows:     5520
+Actual Multimodal Rows:       5520
+Unique (cell_id, month) Rows: 5520
+
+Modality Ingestion & Completeness:
+-------------------------------------------------------------
+Month     S2 Raw/Clean/Used   VIIRS Imgs   ERA5 Hours (Actual/Expected)
+2023-04    6/ 3/ 3               1           720/720 (100.0%)
+2023-05    6/ 5/ 5               1           744/744 (100.0%)
+2023-06    6/ 3/ 3               1           720/720 (100.0%)
+2023-07    6/ 0/ 1               1           744/744 (100.0%)
+2023-08    6/ 3/ 3               1           744/744 (100.0%)
+2023-09    6/ 1/ 1               1           720/720 (100.0%)
+2023-10    7/ 4/ 4               1           744/744 (100.0%)
+2023-11    6/ 3/ 3               1           720/720 (100.0%)
+2023-12    6/ 4/ 4               1           744/744 (100.0%)
+2024-01    6/ 0/ 1               1           744/744 (100.0%)
+2024-02    6/ 2/ 2               1           696/696 (100.0%)
+2024-03    6/ 4/ 4               1           744/744 (100.0%)
+
+Missing Data / NaN Counts across 5,520 Observations:
+-------------------------------------------------------------
+  cell_id                     :     0 NaNs (  0.0%)
+  month                       :     0 NaNs (  0.0%)
+  start_date                  :     0 NaNs (  0.0%)
+  end_date                    :     0 NaNs (  0.0%)
+  ndvi_mean                   :   256 NaNs (  4.6%)
+  ndbi_mean                   :   256 NaNs (  4.6%)
+  ndwi_mean                   :   256 NaNs (  4.6%)
+  ndvi_std                    :   256 NaNs (  4.6%)
+  ndbi_std                    :   256 NaNs (  4.6%)
+  ndwi_std                    :   256 NaNs (  4.6%)
+  valid_pixel_count           :     0 NaNs (  0.0%)
+  valid_pixel_fraction        :     0 NaNs (  0.0%)
+  viirs_avg_rad_mean          :     0 NaNs (  0.0%)
+  viirs_avg_rad_std           :     0 NaNs (  0.0%)
+  viirs_cf_cvg_mean           :     0 NaNs (  0.0%)
+  viirs_cf_cvg_min            :     0 NaNs (  0.0%)
+  viirs_cf_cvg_max            :     0 NaNs (  0.0%)
+  viirs_valid_pixel_count     :     0 NaNs (  0.0%)
+  viirs_valid_pixel_fraction  :     0 NaNs (  0.0%)
+  era5_temperature_mean       :     0 NaNs (  0.0%)
+  era5_temperature_min        :     0 NaNs (  0.0%)
+  era5_temperature_max        :     0 NaNs (  0.0%)
+  era5_precipitation_total    :     0 NaNs (  0.0%)
+  era5_wind_speed_mean        :     0 NaNs (  0.0%)
+  era5_wind_speed_max         :     0 NaNs (  0.0%)
+  era5_observation_count      :     0 NaNs (  0.0%)
+  era5_source_lat             :     0 NaNs (  0.0%)
+  era5_source_lon             :     0 NaNs (  0.0%)
+
+March 2024 Benchmark Regression Check:
+-------------------------------------------------------------
+  S2 NDVI:  Max Abs Diff = 0.000000e+00, Mismatches = 0
+  VIIRS:    Max Abs Diff = 0.000000e+00, Mismatches = 0
+  ERA5 T2m: Max Abs Diff = 0.000000e+00, Mismatches = 0
+
+Final Multimodal Feature Columns:
+-------------------------------------------------------------
+  01. cell_id
+  02. month
+  03. start_date
+  04. end_date
+  05. ndvi_mean
+  06. ndbi_mean
+  07. ndwi_mean
+  08. ndvi_std
+  09. ndbi_std
+  10. ndwi_std
+  11. valid_pixel_count
+  12. valid_pixel_fraction
+  13. viirs_avg_rad_mean
+  14. viirs_avg_rad_std
+  15. viirs_cf_cvg_mean
+  16. viirs_cf_cvg_min
+  17. viirs_cf_cvg_max
+  18. viirs_valid_pixel_count
+  19. viirs_valid_pixel_fraction
+  20. era5_temperature_mean
+  21. era5_temperature_min
+  22. era5_temperature_max
+  23. era5_precipitation_total
+  24. era5_wind_speed_mean
+  25. era5_wind_speed_max
+  26. era5_observation_count
+  27. era5_source_lat
+  28. era5_source_lon
+
+Processing Timestamp: 2026-09-18 17:42:44
+=============================================================

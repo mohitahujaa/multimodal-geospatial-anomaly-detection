@@ -63,3 +63,9 @@ DEFAULT_ERA5_START_DATE = os.getenv("ERA5_START_DATE", "2024-03-01")
 DEFAULT_ERA5_END_DATE = os.getenv("ERA5_END_DATE", "2024-04-01")
 ERA5_NATIVE_SCALE = 11132.0  # meters (~0.1 degrees, native spatial resolution of ERA5-Land)
 
+# Phase 4: Historical Expansion Parameters (Configurable)
+HISTORICAL_START_DATE = os.getenv("HISTORICAL_START_DATE", "2023-04-01")
+HISTORICAL_END_DATE = os.getenv("HISTORICAL_END_DATE", "2024-04-01")
+HISTORICAL_PLOTS_DIR = PROCESSED_DATA_DIR / "plots" / "historical"
+HISTORICAL_PLOTS_DIR.mkdir(parents=True, exist_ok=True)
+
